@@ -1,0 +1,17 @@
+.App {
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+.header {
+  height: 50px;
+  margin-top: 25px;
+}
+
+.remove {
+  position: absolute;
+  right: 0;
+  bottom: -1.5em;
+  color: red;
+}
