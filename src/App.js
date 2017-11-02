@@ -40,8 +40,17 @@ class App extends Component {
 
   onKeyPressed({ key }) {
     if (key === 'Enter') {
-      this.saveRegions(this.state.image, this.state.regions);
-      this.loadNextImage();
+      if (this.state.regions.length > 0) {
+        const plural = this.state.regions.length > 1;
+        const confirmation = window.confirm(`Are you sure there ${plural ? 'are' : 'is'} ${this.state.regions.length} bucket${plural ? 's' : ''} in this image?`);
+
+        if (confirmation) {
+          this.saveRegions(this.state.image, this.state.regions);
+          this.loadNextImage();
+        }
+      } else {
+        window.alert('There is at least 1 bucket in this image. Please select all buckets in the image before pressing the Enter key.');
+      }
     }
   }
 
