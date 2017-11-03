@@ -1,4 +1,11 @@
 *
 !.gitignore
+
 !build/
 !build/**
+
+!index.html
+!static/
+!static/**
+!asset-manifest.json
+!service-worker.js
