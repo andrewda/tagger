@@ -32,7 +32,7 @@ class App extends Component {
   componentWillMount() {
     document.addEventListener('keydown', this.onKeyPressed.bind(this));
 
-    axios.get(`${repository}_manifest.json`).then(res => {
+    axios.get(`${repository}_manifest.json?no-cache=${Math.random()}`).then(res => {
       this.setState({ images: res.data });
       this.loadNextImage();
     });
