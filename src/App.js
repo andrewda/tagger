@@ -3,6 +3,9 @@ import RegionSelect from 'react-region-select';
 import firebase from 'firebase';
 import 'firebase/firestore';
 import axios from 'axios';
+
+import Popup from './components/Popup';
+
 import './App.css';
 
 const repository =
@@ -17,11 +20,14 @@ firebase.initializeApp({
 const db = firebase.firestore();
 const imagesRef = db.collection('images');
 
+const instructions =
+  "Please select each white 5 gallon bucket in the image shown to you individually. In other words, if there's one bucket in the image, draw one box around that bucket. If there are two buckets, draw a box around each bucket individually. Having a little bit of padding on any side of the bucket is alright, but try to be as close to the bucket as possible. A little bit of excess is better than leaving out part of the bucket. If less than 1/4 of the bucket is shown due to it being cut off by the frame or another object, use your judgement about whether a computer could be expected to recognize it as a bucket. Then press Enter to confirm your selections.";
+
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { regions: [], image: false, images: [] };
+    this.state = { regions: [], image: false, images: [], popup: false };
 
     this.onChange = this.onChange.bind(this);
     this.regionRenderer = this.regionRenderer.bind(this);
@@ -32,24 +38,31 @@ class App extends Component {
   componentWillMount() {
     document.addEventListener('keydown', this.onKeyPressed.bind(this));
 
-    axios.get(`${repository}_manifest.json?no-cache=${Math.random()}`).then(res => {
-      this.setState({ images: res.data });
-      this.loadNextImage();
-    });
+    axios
+      .get(`${repository}_manifest.json?no-cache=${Math.random()}`)
+      .then(res => {
+        this.setState({ images: res.data });
+        this.loadNextImage();
+      });
   }
 
   onKeyPressed({ key }) {
     if (key === 'Enter') {
       if (this.state.regions.length > 0) {
         const plural = this.state.regions.length > 1;
-        const confirmation = window.confirm(`Are you sure there ${plural ? 'are' : 'is'} ${this.state.regions.length} bucket${plural ? 's' : ''} in this image?`);
+        const confirmation = window.confirm(
+          `Are you sure there ${plural ? 'are' : 'is'} ${this.state.regions
+            .length} bucket${plural ? 's' : ''} in this image?`
+        );
 
         if (confirmation) {
           this.saveRegions(this.state.image, this.state.regions);
           this.loadNextImage();
         }
       } else {
-        window.alert('There is at least 1 bucket in this image. Please select all buckets in the image before pressing the Enter key.');
+        window.alert(
+          'There is at least 1 bucket in this image. Please select all buckets in the image before pressing the Enter key.'
+        );
       }
     }
   }
@@ -108,6 +121,12 @@ class App extends Component {
     this.setState({ regions });
   }
 
+  togglePopup() {
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
+
   render() {
     return (
       <div className="App">
@@ -128,6 +147,18 @@ class App extends Component {
             />
           </RegionSelect>
         )}
+
+        <br />
+
+        <button onClick={this.togglePopup.bind(this)}>Show Instructions</button>
+
+        {this.state.showPopup ? (
+          <Popup
+            header="Instructions"
+            text={instructions}
+            closePopup={this.togglePopup.bind(this)}
+          />
+        ) : null}
       </div>
     );
   }
