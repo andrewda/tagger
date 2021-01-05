@@ -2,7 +2,7 @@
   "name": "tagger",
   "version": "0.0.0",
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "firebase": "^4.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.1",
